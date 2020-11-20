@@ -23,6 +23,18 @@ class DniParser
         return $person;
     }
 
+    public function parseCloud(string $dni, object $consulta): ?Person
+    {
+        $person = new Person();
+        $person->dni = $consulta->dni;
+        $person->apellidoPaterno = $consulta->apellido_paterno;
+        $person->apellidoMaterno = $consulta->apellido_materno;
+        $person->nombres = $consulta->nombres;
+        $person->codVerifica = strval($this->getVerifyCode($dni));
+
+        return $person;
+    }
+    
     private function getVerifyCode($dni)
     {
         $suma = 5;

@@ -58,25 +58,36 @@ class Dni
      */
     public function get(string $dni): PromiseInterface
     {
-        $url = self::URL_CONSULT;
-        $payload = json_encode(['CODDNI' => $dni]);
+        // $url = self::URL_CONSULT;
+        // $payload = json_encode(['CODDNI' => $dni]);
+
+        // return $this->client
+        //     ->postAsync(
+        //         $url,
+        //         $payload,
+        //         [
+        //             'Content-Type' => 'application/json;chartset=utf-8',
+        //             'Content-Length' => strlen($payload),
+        //             'Requestverificationtoken' => $this->requestToken,
+        //         ])
+        //     ->then(function ($json) use ($dni) {
+        //         $result = json_decode($json);
+        //         if (!$result || !isset($result->data)) {
+        //             return null;
+        //         }
+
+        //         return $this->parser->parse($dni, $result->data);
+        //     });
 
         return $this->client
-            ->postAsync(
-                $url,
-                $payload,
-                [
-                    'Content-Type' => 'application/json;chartset=utf-8',
-                    'Content-Length' => strlen($payload),
-                    'Requestverificationtoken' => $this->requestToken,
-                ])
+            ->getAsync('https://api.reniec.cloud/dni/' . $dni)
             ->then(function ($json) use ($dni) {
                 $result = json_decode($json);
-                if (!$result || !isset($result->data)) {
+                if (!$result || !isset($result->dni)) {
                     return null;
                 }
-
-                return $this->parser->parse($dni, $result->data);
+                
+                return $this->parser->parsecloud($dni, $result);
             });
     }
 }
